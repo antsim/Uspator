@@ -5,7 +5,7 @@ namespace Uspator.Model
     public class BombTask : TaskBase
     {
         [JsonProperty("task")]
-        public override string Task => "PLACE_BOMB";
+        public override string Task => "BOMB";
         
         [JsonProperty("x")]
         public int X { get; set; }

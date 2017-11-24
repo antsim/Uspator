@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,12 +23,29 @@ namespace Uspator.Controllers
             {  
                 requestBody = await reader.ReadToEndAsync();
             }
+            
             var request = JsonConvert.DeserializeObject<ServerRequest>(requestBody);
+            Console.WriteLine(request.GameInfo.CurrentTick);
+
+            try
+            {
+                var battleFactory = new BattleTaskFactory(request);
+                var tasks = battleFactory.GetTaskTypes(request.GameInfo.NumOfTasksPerTick);
+                foreach (var task in tasks)
+                {
+                    battleFactory.ApplyTask(task);
+                }
             
-            // Remember to send a list of tasks, but no more than what the request specifies
-            var tasks = new List<TaskBase> {new NoopTask()};
+                // Remember to send a list of tasks, but no more than what the request specifies
+                Console.WriteLine(JsonConvert.SerializeObject(tasks));
+                return new JsonResult(tasks);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             
-            return new JsonResult(tasks);
         }
     }
 }

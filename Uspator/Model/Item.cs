@@ -15,5 +15,10 @@ namespace Uspator.Model
         
         [JsonProperty("z")]
         public int Z { get; set; }
+        
+        public string GetPositionString()
+        {
+            return $"{X}{Y}{Z}";
+        }
     }
 }
