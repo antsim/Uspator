@@ -84,12 +84,14 @@ namespace Uspator
                 Console.WriteLine("Virtual me found");
                 self = _virtualMe;
             }
-            
-            var closestProximity =  _request.Players.Where(p => !p.name.ToLowerInvariant()
-                .Equals(Settings.BOTNAME.ToLowerInvariant())).Min(p => p.GetProximity(self));
-            var closestPlayer = _request.Players.FirstOrDefault(p => p.GetProximity(self) == closestProximity);
 
-            var axis = closestPlayer.GetMostFarAxis(self);
+            var allItems = _request.Players.Select(p => new Player() { name = p.name, X = p.X, Y = p.Y, Z = p.Z})
+                .Concat(_request.Items.Select(p => new Player() {name = "Item", X = p.X, Y = p.Y, Z = p.Z})).ToList();
+            var closestProximity =  allItems.Where(p => !p.name.ToLowerInvariant()
+                .Equals(Settings.BOTNAME.ToLowerInvariant())).Min(p => p.GetProximity(self));
+            var closestPlayer = allItems.FirstOrDefault(p => p.GetProximity(self) == closestProximity);
+
+            var axis = closestPlayer.GetClosestAxis(self);
 
             var possibleMoves = ListPossibleMoves(self);
             var counter = 0;
